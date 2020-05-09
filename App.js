@@ -1,19 +1,42 @@
-import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import React, { Component } from 'react'
 
-export default function App() {
-  return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-    </View>
-  );
+import { Provider } from 'react-redux'
+
+// Store
+import { createStore, applyMiddleware, compose } from 'redux'
+import rootReducer from './reducers/index'
+import thunkMiddleware from 'redux-thunk'
+const middleware = applyMiddleware(thunkMiddleware)
+const store = createStore(rootReducer, compose(middleware, window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()))
+
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
+import AuthNavigator from './navigation/AuthNavigator'
+import RootDrawerNavigator from './navigation/RootDrawerNavigator'
+//console.disableYellowBox = true;
+
+class App extends Component {
+  render () {
+
+    const Stack = createStackNavigator();
+
+    return (
+      <Provider store={store}>
+        <NavigationContainer>
+          <Stack.Navigator 
+            initialRouteName="Auth"
+            headerMode='none'
+          >
+            <Stack.Screen name="Drawer" component={RootDrawerNavigator} />
+            <Stack.Screen name="Auth" component={AuthNavigator} />
+          </Stack.Navigator>
+        </NavigationContainer>
+      </Provider>
+    );
+   }
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+export default App;
+
+
+
